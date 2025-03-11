@@ -44,4 +44,9 @@ public class User {
     public int hashCode() {
         return Objects.hash(id, name, email, password, createdAt);
     }
+
+    @PrePersist
+    protected void onCreate(){
+        this.createdAt = LocalDateTime.now();
+    }
 }
