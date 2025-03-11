@@ -4,7 +4,9 @@ package org.heymouad.blog.domain.entities;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -21,6 +23,9 @@ public class Tag {
 
     @Column(nullable = false, unique = true)
     private String name;
+
+    @ManyToMany(mappedBy = "tags")
+    private Set<Post> posts = new HashSet<>();
 
     // Custom equals/hashCode implementation needed instead of Lombok's
     // to avoid issues with JPA entity lifecycle management
