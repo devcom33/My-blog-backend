@@ -3,6 +3,7 @@ package org.heymouad.blog.domain.mappers;
 
 import org.heymouad.blog.domain.PostStatus;
 import org.heymouad.blog.domain.dtos.CategoryDto;
+import org.heymouad.blog.domain.dtos.CreateCategoryRequest;
 import org.heymouad.blog.domain.entities.Category;
 import org.heymouad.blog.domain.entities.Post;
 import org.mapstruct.Mapper;
@@ -21,6 +22,7 @@ public interface CategoryMapper {
      */
     @Mapping(target = "postCount", source="posts", qualifiedByName = "calculatePostCount")
     CategoryDto toDto(Category category);
+    Category toEntity(CreateCategoryRequest createCategoryRequest);
 
     @Named("calculatePostCount")
     default long calculatePostCount(List<Post> posts) {
