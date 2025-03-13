@@ -8,6 +8,8 @@ import org.heymouad.blog.services.CategoryService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -27,5 +29,17 @@ public class CategoryServiceImpl implements CategoryService {
             throw new IllegalArgumentException("Category already exists with name: " + category.getName());
         }
         return categoryRepository.save(category);
+    }
+
+    @Override
+    @Transactional
+    public void deleteCategory(UUID categoryId) {
+        Optional<Category> category = categoryRepository.findById(categoryId);
+        if (category.isPresent()) {
+            if (!category.get().getPosts().isEmpty()) {
+                throw new IllegalArgumentException("Category already exists with id: " + categoryId);
+            }
+            categoryRepository.deleteById(categoryId);
+        }
     }
 }
