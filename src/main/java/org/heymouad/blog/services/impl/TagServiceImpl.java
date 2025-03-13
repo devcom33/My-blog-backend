@@ -15,7 +15,7 @@ public class TagServiceImpl implements TagService {
 
     @Override
     public List<Tag> listTags() {
-        return tagRepository.findAll();
+        return tagRepository.findAllWithPostCount();
     }
 
     @Override
