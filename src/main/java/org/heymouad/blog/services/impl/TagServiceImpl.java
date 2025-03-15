@@ -7,10 +7,7 @@ import org.heymouad.blog.repositories.TagRepository;
 import org.heymouad.blog.services.TagService;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -47,6 +44,17 @@ public class TagServiceImpl implements TagService {
         savedTags.addAll(existingTags);
 
         return savedTags;
+    }
+
+    @Override
+    public void deleteTag(UUID tagId) {
+        Optional<Tag> tag = tagRepository.findById(tagId);
+        if(tag.isPresent()) {
+            if(!tag.get().getPosts().isEmpty()) {
+                throw new IllegalStateException("Cannot Delete Tag With Posts");
+            }
+            tagRepository.delete(tag.get());
+        }
     }
 
 }
