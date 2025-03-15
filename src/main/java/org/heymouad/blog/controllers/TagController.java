@@ -2,17 +2,16 @@ package org.heymouad.blog.controllers;
 
 
 import lombok.RequiredArgsConstructor;
-import org.heymouad.blog.domain.dtos.TagDto;
+import org.heymouad.blog.domain.dtos.CreateTagRequest;
+import org.heymouad.blog.domain.dtos.TagResponse;
 import org.heymouad.blog.domain.entities.Tag;
 import org.heymouad.blog.domain.mappers.TagMapper;
 import org.heymouad.blog.services.TagService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/v1/tags")
@@ -22,9 +21,20 @@ public class TagController {
     private final TagMapper tagMapper;
 
     @GetMapping
-    public ResponseEntity<List<TagDto>> getTags() {
-        List<TagDto> tags = tagService.listTags().
-                stream().map(tagMapper::entityToDto).collect(Collectors.toList());
-        return ResponseEntity.ok(tags);
+    public ResponseEntity<List<TagResponse>> getTags() {
+        List<Tag> tags = tagService.listTags();
+        return ResponseEntity.ok(tagMapper.toTagResponseList(tags));
+    }
+
+    @PostMapping
+    public ResponseEntity<List<TagResponse>> createTag(@RequestBody CreateTagRequest createTagsRequest) {
+        List<Tag> savedTags = tagService.createTags(createTagsRequest.getNames());
+
+        List<TagResponse> tagResponses = tagMapper.toTagResponseList(savedTags);
+
+        return new ResponseEntity<>(
+                tagResponses,
+                HttpStatus.CREATED
+        );
     }
 }

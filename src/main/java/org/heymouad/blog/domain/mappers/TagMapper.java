@@ -1,7 +1,8 @@
 package org.heymouad.blog.domain.mappers;
 
 import org.heymouad.blog.domain.PostStatus;
-import org.heymouad.blog.domain.dtos.TagDto;
+import org.heymouad.blog.domain.dtos.CreateTagRequest;
+import org.heymouad.blog.domain.dtos.TagResponse;
 import org.heymouad.blog.domain.entities.Post;
 import org.heymouad.blog.domain.entities.Tag;
 import org.mapstruct.Mapper;
@@ -16,7 +17,10 @@ import java.util.Set;
 public interface TagMapper {
 
     @Mapping(target="postCount", source="posts", qualifiedByName = "calculatePostCount")
-    TagDto entityToDto(Tag tag);
+    TagResponse toTagResponse(Tag tag);
+
+
+    List<TagResponse> toTagResponseList(List<Tag> tags);
 
     @Named("calculatePostCount")
     default long calculatePostCount(Set<Post> posts) {
