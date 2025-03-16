@@ -2,9 +2,12 @@ package org.heymouad.blog.controllers;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.heymouad.blog.domain.PostRequest;
+import org.heymouad.blog.domain.UpdatePostRequest;
 import org.heymouad.blog.domain.dtos.PostRequestDto;
 import org.heymouad.blog.domain.dtos.PostDto;
+import org.heymouad.blog.domain.dtos.UpdatePostRequestDto;
 import org.heymouad.blog.domain.entities.Post;
 import org.heymouad.blog.domain.entities.User;
 import org.heymouad.blog.domain.mappers.PostMapper;
@@ -20,6 +23,7 @@ import java.util.UUID;
 @RequestMapping("/api/v1/posts")
 @RestController
 @RequiredArgsConstructor
+@Slf4j
 public class PostController {
     private final PostService postService;
     private final PostMapper postMapper;
@@ -74,6 +78,20 @@ public class PostController {
 
         return new ResponseEntity<>(postMapper.toDto(savedPost), HttpStatus.CREATED);
     }
+    @PutMapping(path = "/{id}")
+    public ResponseEntity<PostDto> updatePost(
+            @PathVariable UUID id,
+            @Valid @RequestBody UpdatePostRequestDto updatePostRequestDto) {
+        UpdatePostRequest updatePostRequest = postMapper.toUpdatePostRequest(updatePostRequestDto);
+        Post updatedPost = postService.updatePost(id, updatePostRequest);
+        PostDto updatedPostDto = postMapper.toDto(updatedPost);
+        return ResponseEntity.ok(updatedPostDto);
+    }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deletePost(@PathVariable UUID id) {
+        postService.deletePost(id);
+        return ResponseEntity.noContent().build();
+    }
 
 }

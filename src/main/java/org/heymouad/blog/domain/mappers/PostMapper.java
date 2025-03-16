@@ -2,8 +2,10 @@ package org.heymouad.blog.domain.mappers;
 
 
 import org.heymouad.blog.domain.PostRequest;
+import org.heymouad.blog.domain.UpdatePostRequest;
 import org.heymouad.blog.domain.dtos.PostRequestDto;
 import org.heymouad.blog.domain.dtos.PostDto;
+import org.heymouad.blog.domain.dtos.UpdatePostRequestDto;
 import org.heymouad.blog.domain.entities.Post;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -16,4 +18,5 @@ public interface PostMapper {
     @Mapping(target = "tags", source = "tags")
     PostDto toDto(Post post);
     PostRequest toPostRequest(PostRequestDto postRequestDto);
+    UpdatePostRequest toUpdatePostRequest(UpdatePostRequestDto updatePostRequestDto);
 }
