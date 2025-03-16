@@ -1,5 +1,6 @@
 package org.heymouad.blog.services.impl;
 
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.heymouad.blog.domain.entities.Tag;
@@ -19,6 +20,21 @@ public class TagServiceImpl implements TagService {
     public List<Tag> listTags() {
         return tagRepository.findAllWithPostCount();
     }
+
+    @Override
+    public Tag getTagById(UUID id) {
+        return tagRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Tag not found with id: " + id));
+    }
+
+    @Override
+    public List<Tag> getTagByIds(Set<UUID> ids) {
+        List<Tag> tags = tagRepository.findAllById(ids);
+        if (ids.size() != tags.size()) {
+            throw new EntityNotFoundException("Not all tags were found for the specified ids: " + ids);
+        }
+        return tags;
+    }
+
     @Transactional
     @Override
     public List<Tag> createTags(Set<String> tags) {

@@ -6,7 +6,7 @@ import org.heymouad.blog.domain.entities.User;
 import org.heymouad.blog.repositories.UserRepository;
 import org.heymouad.blog.security.JwtAuthenticationFilter;
 import org.heymouad.blog.services.AuthenticationService;
-import org.heymouad.blog.services.impl.BlogUserDetailsService;
+import org.heymouad.blog.security.BlogUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -31,6 +31,7 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.POST, "/api/v1/auth/login").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/posts/drafts").authenticated()
                         .requestMatchers(HttpMethod.GET, "/api/v1/posts/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/categories/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/tags/**").permitAll()

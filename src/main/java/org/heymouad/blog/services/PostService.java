@@ -1,16 +1,19 @@
 package org.heymouad.blog.services;
 
+import org.heymouad.blog.domain.PostRequest;
 import org.heymouad.blog.domain.entities.Post;
+import org.heymouad.blog.domain.entities.User;
 
 import java.util.List;
 import java.util.UUID;
 
 public interface PostService {
-    Post createPost(Post post);
+    Post createPost(User user, PostRequest postRequest);
     Post updatePost(Post post);
     void deletePost(UUID postId);
     Post getPost(UUID postId);
-    List<Post> getPosts();
+    List<Post> getAllPosts(UUID categoryId, UUID tagId);
+    List<Post> getDraftPosts(User userId);
     /*
     List<Post> getPostsByUser(Integer userId);
     List<Post> getPostsByTag(String tag);

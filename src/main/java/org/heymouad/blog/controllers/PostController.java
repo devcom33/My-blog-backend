@@ -1,21 +1,58 @@
 package org.heymouad.blog.controllers;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.heymouad.blog.domain.PostRequest;
+import org.heymouad.blog.domain.dtos.PostRequestDto;
 import org.heymouad.blog.domain.dtos.PostDto;
 import org.heymouad.blog.domain.entities.Post;
+import org.heymouad.blog.domain.entities.User;
 import org.heymouad.blog.domain.mappers.PostMapper;
 import org.heymouad.blog.services.PostService;
+import org.heymouad.blog.services.UserService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
-@RequestMapping("/api/v3/posts")
+@RequestMapping("/api/v1/posts")
 @RestController
 @RequiredArgsConstructor
 public class PostController {
     private final PostService postService;
     private final PostMapper postMapper;
+    private final UserService userService;
+
+    /**
+     * @RequestParam is used because categoryId and tagId are sent by the client in the URL query parameters.
+     * @RequestAttribute would be used if these values were set earlier in the request lifecycle, such as in a filter or interceptor.
+     */
+
+    // Published Posts
+    @GetMapping
+    public ResponseEntity<List<PostDto>> getAllPosts(
+            @RequestParam(required = false) UUID categoryId,
+            @RequestParam(required = false) UUID tagId
+    ) {
+        List<Post> posts = postService.getAllPosts(categoryId, tagId);
+        List<PostDto> responsePosts = posts.stream().map(postMapper::toDto).toList();
+
+        return ResponseEntity.ok(responsePosts);
+    }
+
+    // Drafted Posts
+    @GetMapping(path = "/drafts")
+    public ResponseEntity<List<PostDto>> getDraftPosts(
+            @RequestAttribute UUID userId
+    ) {
+        User author = userService.loadUserById(userId);
+        List<Post> draftedPosts = postService.getDraftPosts(author);
+        List<PostDto> responsePosts = draftedPosts.stream().map(postMapper::toDto).toList();
+
+        return ResponseEntity.ok(responsePosts);
+    }
 
     @GetMapping(path="/{id}")
     public ResponseEntity<PostDto> getPost(@PathVariable UUID id) {
@@ -26,5 +63,17 @@ public class PostController {
         PostDto postDto = postMapper.toDto(post);
         return ResponseEntity.ok(postDto);
     }
+
+    @PostMapping
+    public ResponseEntity<PostDto> createPost(
+            @Valid @RequestBody PostRequestDto createPostRequestDto,
+            @RequestAttribute UUID userId) {
+        User author = userService.loadUserById(userId);
+        PostRequest postRequest = postMapper.toPostRequest(createPostRequestDto);
+        Post savedPost = postService.createPost(author, postRequest);
+
+        return new ResponseEntity<>(postMapper.toDto(savedPost), HttpStatus.CREATED);
+    }
+
 
 }

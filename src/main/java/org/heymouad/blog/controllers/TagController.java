@@ -3,7 +3,7 @@ package org.heymouad.blog.controllers;
 
 import lombok.RequiredArgsConstructor;
 import org.heymouad.blog.domain.dtos.CreateTagRequest;
-import org.heymouad.blog.domain.dtos.TagResponse;
+import org.heymouad.blog.domain.dtos.TagDto;
 import org.heymouad.blog.domain.entities.Tag;
 import org.heymouad.blog.domain.mappers.TagMapper;
 import org.heymouad.blog.services.TagService;
@@ -22,16 +22,16 @@ public class TagController {
     private final TagMapper tagMapper;
 
     @GetMapping
-    public ResponseEntity<List<TagResponse>> getTags() {
+    public ResponseEntity<List<TagDto>> getTags() {
         List<Tag> tags = tagService.listTags();
         return ResponseEntity.ok(tagMapper.toTagResponseList(tags));
     }
 
     @PostMapping
-    public ResponseEntity<List<TagResponse>> createTag(@RequestBody CreateTagRequest createTagsRequest) {
+    public ResponseEntity<List<TagDto>> createTag(@RequestBody CreateTagRequest createTagsRequest) {
         List<Tag> savedTags = tagService.createTags(createTagsRequest.getNames());
 
-        List<TagResponse> tagResponses = tagMapper.toTagResponseList(savedTags);
+        List<TagDto> tagResponses = tagMapper.toTagResponseList(savedTags);
 
         return new ResponseEntity<>(
                 tagResponses,

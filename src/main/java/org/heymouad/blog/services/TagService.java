@@ -9,6 +9,8 @@ import java.util.UUID;
 public interface TagService {
 
     List<Tag> listTags();
+    Tag getTagById(UUID id);
+    List<Tag> getTagByIds(Set<UUID> ids);
     List<Tag> createTags(Set<String> tags);
     void deleteTag(UUID tagId);
 }
